@@ -467,7 +467,8 @@ def compute_fid(fdir1=None, fdir2=None, gen=None,
             batch_size=32, device=torch.device("cuda"), dataset_name="FFHQ",
             dataset_res=1024, dataset_split="train", num_gen=50_000, z_dim=512,
             custom_feat_extractor=None, verbose=True,
-            custom_image_tranform=None, custom_fn_resize=None, use_dataparallel=True):
+            custom_image_tranform=None, custom_fn_resize=None, use_dataparallel=True,
+            stats_folder=None):
     # build the feature extractor based on the mode and the model to be used
     if custom_feat_extractor is None and model_name=="inception_v3":
         feat_model = build_feature_extractor(mode, device, use_dataparallel=use_dataparallel)
@@ -498,7 +499,8 @@ def compute_fid(fdir1=None, fdir2=None, gen=None,
         score = fid_folder(fdir1, dataset_name, dataset_res, dataset_split,
             model=feat_model, mode=mode, model_name=model_name,
             custom_fn_resize=custom_fn_resize, custom_image_tranform=custom_image_tranform,
-            num_workers=num_workers, batch_size=batch_size, device=device, verbose=verbose)
+            num_workers=num_workers, batch_size=batch_size, device=device, verbose=verbose,
+            stats_folder=stats_folder)
         return score
 
     # compute fid for a generator, using images in fdir2

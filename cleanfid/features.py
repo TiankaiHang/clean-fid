@@ -50,7 +50,7 @@ def build_feature_extractor(mode, device=torch.device("cuda"), use_dataparallel=
 """
 Load precomputed reference statistics for commonly used datasets
 """
-def get_reference_statistics(name, res, mode="clean", model_name="inception_v3", seed=0, split="test", metric="FID"):
+def get_reference_statistics(name, res, mode="clean", model_name="inception_v3", seed=0, split="test", metric="FID", stats_folder=None):
     base_url = "https://www.cs.cmu.edu/~clean-fid/stats/"
     if split == "custom":
         res = "na"
@@ -61,8 +61,8 @@ def get_reference_statistics(name, res, mode="clean", model_name="inception_v3",
     if metric == "FID":
         rel_path = (f"{name}_{mode}{model_modifier}_{split}_{res}.npz").lower()
         url = f"{base_url}/{rel_path}"
-        mod_path = os.path.dirname(cleanfid.__file__)
-        stats_folder = os.path.join(mod_path, "stats")
+        if stats_folder is None:
+            stats_folder = os.path.join(os.path.dirname(cleanfid.__file__), "stats")
         fpath = check_download_url(local_folder=stats_folder, url=url)
         stats = np.load(fpath)
         mu, sigma = stats["mu"], stats["sigma"]
@@ -70,8 +70,8 @@ def get_reference_statistics(name, res, mode="clean", model_name="inception_v3",
     elif metric == "KID":
         rel_path = (f"{name}_{mode}{model_modifier}_{split}_{res}_kid.npz").lower()
         url = f"{base_url}/{rel_path}"
-        mod_path = os.path.dirname(cleanfid.__file__)
-        stats_folder = os.path.join(mod_path, "stats")
+        if stats_folder is None:
+            stats_folder = os.path.join(os.path.dirname(cleanfid.__file__), "stats")
         fpath = check_download_url(local_folder=stats_folder, url=url)
         stats = np.load(fpath)
         return stats["feats"]
